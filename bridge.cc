@@ -63,8 +63,11 @@ _convert_v8value_to_sv(Handle<Value> value)
         return newSVuv(value->Uint32Value());
     else if (value->IsNumber())
         return newSVnv(value->NumberValue());
-    else if (value->IsString())
-        return newSVpv(*(String::AsciiValue(value)), 0);
+    else if (value->IsString()) {
+        SV *sv = newSVpv(*(String::Utf8Value(value)), 0);
+        sv_utf8_decode(sv);
+        return sv;
+    }
     else {
         Perl_warn(aTHX_ "Unsupported value type");
         return &PL_sv_undef;
@@ -100,12 +103,12 @@ _perl_method_by_name(const Arguments &args)
     ENTER;
     SAVETMPS;
 
-    String::AsciiValue method(args.Data()->ToString());
+    String::Utf8Value method(args.Data()->ToString());
     if (0) Perl_warn(aTHX_ "method called: %s", *method);
 
     arguments = new char *[args.Length() + 1];
     for (int i = 0; i < args.Length(); i ++) {
-        String::AsciiValue str(args[i]);
+        String::Utf8Value str(args[i]);
         arguments[i] = savepv(*str);
     }
     arguments[args.Length()] = NULL;
@@ -158,14 +161,14 @@ v8context_execute(V8CONTEXT *ctx, const char *source)
     Handle<Script> script
         = Script::Compile(String::New(source), Undefined());
     if (script.IsEmpty()) {
-        String::AsciiValue error(try_catch.Exception());
+        String::Utf8Value error(try_catch.Exception());
         Perl_croak(aTHX_ "execute(): compile error: %s", *error);
         return &PL_sv_undef;
     }
     else {
         Handle<Value> result = script->Run();
         if (result.IsEmpty()) {
-            String::AsciiValue error(try_catch.Exception());
+            String::Utf8Value error(try_catch.Exception());
             Perl_croak(aTHX_ "execute(): execute error: %s", *error);
             return &PL_sv_undef;
         }
