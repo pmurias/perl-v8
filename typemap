@@ -1,0 +1,9 @@
+TYPEMAP
+V8CONTEXT *     T_V8CONTEXT
+
+INPUT
+T_V8CONTEXT
+        if (SvOK($arg) && SvROK($arg))
+            $var = (V8CONTEXT *) mg_find(SvRV($arg), PERL_MAGIC_ext)->mg_obj;
+        else
+            $var = NULL;
