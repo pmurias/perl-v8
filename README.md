@@ -16,6 +16,12 @@ binding for V8.
 This code works fine for me but I would really be happy to turn this over to
 someone who is more of an expert in [XS](http://perldoc.perl.org/perlxs.html).
 
+I do not have a [CPAN](http://cpan.org) account (yet?) and of course that's
+where all Perl modules should ultimately live.  Once I get some feedback or a
+new maintainer approaches me, we'll move this module there.  Also, `V8` is not
+the best module name (no namespace).
+
+
 ## Installation
 
 Download, build, and install v8.
