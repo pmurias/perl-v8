@@ -56,7 +56,7 @@ Build the perl extension module.
 
 Try it out.
 
-    perl test.pl
+    perl sample.pl
 
 ## Dependencies
 
